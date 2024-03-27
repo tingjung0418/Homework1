@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 interface ID31eg4t3 {
     function proxyCall(bytes calldata data) external returns (address);
-    //function changeResult() external;
+    function changeResult() external;
 }
 
 contract Attack {

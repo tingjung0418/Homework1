@@ -73,25 +73,51 @@ contract NFinTech is IERC721 {
         if (owner == address(0)) revert ZeroAddress();
         return owner;
     }
+    error InvalidAddress();
 
     function setApprovalForAll(address operator, bool approved) external {
         // TODO: please add your implementaiton here
+        if (operator == address(0)) revert InvalidAddress();
+
+		_operatorApproval[msg.sender][operator] = approved;
+		emit ApprovalForAll(msg.sender, operator, approved);
     }
 
     function isApprovedForAll(address owner, address operator) public view returns (bool) {
         // TODO: please add your implementaiton here
+        return _operatorApproval[owner][operator];
     }
 
     function approve(address to, uint256 tokenId) external {
         // TODO: please add your implementaiton here
+        address owner = _owner[tokenId];
+		require(msg.sender == owner || isApprovedForAll(owner, msg.sender),
+			"ERC721: approve caller is not owner nor approved for all");
+
+		_tokenApproval[tokenId] = to;
+		emit Approval(owner, to, tokenId);
     }
 
     function getApproved(uint256 tokenId) public view returns (address operator) {
         // TODO: please add your implementaiton here
+        require(_owner[tokenId] != address(0), "ERC721: approved query for nonexistent token");
+		return _tokenApproval[tokenId];
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public {
         // TODO: please add your implementaiton here
+        require(_isApprovedOrOwner(msg.sender, tokenId), "NFinTech: transfer caller is not owner nor approved");
+
+		require(from != address(0), "NFinTech: transfer from the zero address");
+		require(to != address(0), "NFinTech: transfer to the zero address");
+
+		_approve(address(0), tokenId);
+
+		_balances[from] -= 1;
+		_balances[to] += 1;
+
+		_owner[tokenId] = to;
+		emit Transfer(from, to, tokenId);
     }
 
     function safeTransferFrom(address from, address to, uint256 tokenId, bytes calldata data) public {
