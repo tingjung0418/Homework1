@@ -8,7 +8,9 @@ contract StudentV1 {
     function register() external returns (uint256) {
         // TODO: please add your implementaiton here
         registerCallCount++;
-        return (registerCallCount % 2 == 0) ? 123 : 1001;
+        if(registerCallCount % 2 == 0)
+            return 123;
+        return 2000;
     }
 }
 
@@ -20,6 +22,10 @@ interface IClassroomV2 {
 contract StudentV2 {
     function register() external view returns (uint256) {
         // TODO: please add your implementaiton here
+        IClassroomV2 class = IClassroomV2(msg.sender);
+        if (class.isEnrolled())
+            return 123;
+        return 2000;
     }
 }
 
@@ -27,6 +33,8 @@ contract StudentV2 {
 contract StudentV3 {
     function register() external view returns (uint256) {
         // TODO: please add your implementaiton here
-        return gasleft() <= 6635 ? 123 : gasleft();
+        if(gasleft() <= 7000)
+            return 123;
+        return gasleft();
     }
 }
